@@ -1,5 +1,5 @@
 # PumpkinSoup
-A simple Soup-PvP Plugin for the Pumpkin Minecraft Server.
+A simple Soup-PvP Plugin for the [Pumpkin](https://github.com/Pumpkin-MC/Pumpkin) Minecraft Server.
 
 # Features
 - [X] Instant Soup Healing
