@@ -21,7 +21,6 @@ pub struct SoupRightClickHandler;
 #[async_trait]
 impl EventHandler<PlayerInteractEvent> for SoupRightClickHandler {
     async fn handle_blocking(&self, _server: &Arc<Server>, event: &mut PlayerInteractEvent) {
-        log::info!("Got here");
         if matches!(
             event.action,
             InteractAction::LeftClickAir | InteractAction::LeftClickBlock
