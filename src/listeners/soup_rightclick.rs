@@ -15,7 +15,7 @@ use pumpkin_api_macros::with_runtime;
 use pumpkin_data::item::Item;
 use pumpkin_world::item::ItemStack;
 
-struct SoupRightClickHandler;
+pub struct SoupRightClickHandler;
 
 #[with_runtime(global)]
 #[async_trait]
@@ -40,7 +40,7 @@ impl EventHandler<PlayerInteractEvent> for SoupRightClickHandler {
 
         if old_health < 20.0 {
             let new_health = (old_health + 7.0).min(20.0);
-            player.set_health(new_health);
+            player.set_health(new_health).await;
             replace_soup_with_bowl(player).await;
         }
     }
@@ -50,5 +50,5 @@ pub async fn replace_soup_with_bowl(player: &Arc<Player>) {
     let mut bowl = ItemStack::new(1, &Item::BOWL);
     player
         .inventory()
-        .insert_stack(player.inventory().get_selected_slot().into(), &mut bowl);
+        .insert_stack(player.inventory().get_selected_slot().into(), &mut bowl).await;
 }
