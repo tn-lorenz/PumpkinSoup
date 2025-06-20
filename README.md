@@ -18,7 +18,8 @@
 - [ ] Cocoa and cactus recraft recipes*
 - [ ] /soup <recraft_amount> command that fills the player's inventory with soup and a customizable amount of recraft
 
-
-> [!IMPORTANT]
-> Pumpkin and this plugin are currently under heavy development.<br>
-> (*): _Pumpkin does not provide the utility to do this as of June 2025_
+<div align="center">
+  > [!IMPORTANT]
+  > Pumpkin and this plugin are currently under heavy development.<br>
+  > (*): _Pumpkin does not provide the utility to do this as of June 2025_
+</div>
