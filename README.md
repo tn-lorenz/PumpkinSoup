@@ -1,7 +1,9 @@
 # PumpkinSoup
 ![Build](https://github.com/tn-lorenz/PumpkinSoup/actions/workflows/rust.yml/badge.svg) [![PumpkinMC](https://img.shields.io/badge/Built_for-PumpkinMC-orange)](https://github.com/Pumpkin-MC/Pumpkin)
 
-<img src="PUMPKING_SOUP_AYOOO.png" alt="Logo" width="150"/>
+<div style="text-align: center;">
+  <img src="PUMPKING_SOUP_AYOOO.png" alt="Logo" width="250"/>
+</div>
 
 A simple Soup-PvP Plugin for the [Pumpkin](https://github.com/Pumpkin-MC/Pumpkin) Minecraft Server.
 
