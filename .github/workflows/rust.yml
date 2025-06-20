@@ -1,4 +1,4 @@
-name: Cargo Build, Test, and Linting
+name: CI
 
 on:
   push:
