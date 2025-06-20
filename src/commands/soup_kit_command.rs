@@ -70,12 +70,10 @@ pub(crate) async fn give_kit(player: &Arc<Player>, recraft_amount: Option<i32>) 
             player.set_item(14, reds).await;
             player.set_item(15, browns).await;
         }
-        Some(v) if v == 0 => {
+        Some(0) => {
             player.fill_inventory_with_soup().await;
         }
-        Some(_) => {
-            return;
-        }
+        Some(_) => {}
         None => {
             player.fill_inventory_with_soup().await;
         }
