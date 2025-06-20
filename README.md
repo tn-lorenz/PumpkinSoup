@@ -1,4 +1,6 @@
 # PumpkinSoup
+![Build](https://github.com/tn-lorenz/PumpkinSoup/actions/workflows/rust.yml/badge.svg)
+
 A simple Soup-PvP Plugin for the [Pumpkin](https://github.com/Pumpkin-MC/Pumpkin) Minecraft Server.
 
 # Features
