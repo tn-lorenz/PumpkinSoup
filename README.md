@@ -3,7 +3,10 @@
   # PumpkinSoup
   
   ![Build](https://github.com/tn-lorenz/PumpkinSoup/actions/workflows/rust.yml/badge.svg) [![PumpkinMC](https://img.shields.io/badge/Built_for-PumpkinMC-orange)](https://github.com/Pumpkin-MC/Pumpkin)
-  <img src="PUMPKING_SOUP_AYOOO.png" alt="Logo" width="250"/>
+
+  <p align="center" width="100%">
+    <img src="PUMPKING_SOUP_AYOOO.png" alt="Logo" width=33%/>
+  </p>
 
 </div>
 
