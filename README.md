@@ -15,7 +15,7 @@
 - [X] Instant soup healing
 - [ ] Regenerating food level instead of health if a player is hungry*
 - [ ] Refill and recraft signs with customizable text*
-- [ ] Cocoa and catus recraft recipes*
+- [ ] Cocoa and cactus recraft recipes*
 - [ ] /soup <recraft_amount> command that fills the player's inventory with soup and a customizable amount of recraft
 
 
