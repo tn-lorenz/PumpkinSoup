@@ -6,10 +6,7 @@ use pumpkin::{
     command::{
         args::{Arg, ConsumedArgs, simple::SimpleArgConsumer},
         dispatcher::{CommandError, CommandError::InvalidConsumption},
-        tree::{
-            CommandTree,
-            builder::{argument, literal},
-        },
+        tree::{CommandTree, builder::argument},
         {CommandExecutor, CommandSender},
     },
     entity::player::Player,
