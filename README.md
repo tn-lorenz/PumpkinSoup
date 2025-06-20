@@ -20,5 +20,5 @@
 
 
 > [!IMPORTANT]
-> Pumpkin and this plugin are currently under heavy development.
+> Pumpkin and this plugin are currently under heavy development. \n
 > (*): _Pumpkin does not provide the utility to do this as of June 2025_
