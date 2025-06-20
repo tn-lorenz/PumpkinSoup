@@ -112,6 +112,9 @@ impl PlayerUtil for Arc<Player> {
 
 pub fn init_command_tree() -> CommandTree {
     CommandTree::new(NAMES, DESCRIPTION)
-        .then(literal("soupkit").execute(SoupKitExecutor))
-        .then(argument(RECRAFT_ARG_NAME, SimpleArgConsumer).execute(SoupKitExecutor))
+        .then(
+            argument(RECRAFT_ARG_NAME, SimpleArgConsumer)
+                .execute(SoupKitExecutor)
+        )
+        .execute(SoupKitExecutor)
 }
