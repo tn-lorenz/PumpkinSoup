@@ -11,7 +11,9 @@ pub mod listeners;
 async fn on_load(&mut self, server: &Context) -> Result<(), String> {
     pumpkin::init_log!();
 
-    server.register_event(Arc::new(SoupRightClickHandler), EventPriority::Lowest, true).await;
+    server
+        .register_event(Arc::new(SoupRightClickHandler), EventPriority::Lowest, true)
+        .await;
 
     log::info!("PumpkinSoup has been loaded.");
     Ok(())

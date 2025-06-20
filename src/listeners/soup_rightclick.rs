@@ -29,11 +29,13 @@ impl EventHandler<PlayerInteractEvent> for SoupRightClickHandler {
         }
 
         let player = &event.player;
-        let held_item = player.inventory().held_item();
-        let held_item_guard = held_item.lock().await;
 
-        if held_item_guard.get_item() != &Item::MUSHROOM_STEW {
-            return;
+        let held_item = player.inventory().held_item();
+        {
+            let held_item_guard = held_item.lock().await;
+            if held_item_guard.get_item() != &Item::MUSHROOM_STEW {
+                return;
+            }
         }
 
         let old_health = player.living_entity.health.load();
@@ -50,5 +52,6 @@ pub async fn replace_soup_with_bowl(player: &Arc<Player>) {
     let mut bowl = ItemStack::new(1, &Item::BOWL);
     player
         .inventory()
-        .insert_stack(player.inventory().get_selected_slot().into(), &mut bowl).await;
+        .insert_stack(player.inventory().get_selected_slot().into(), &mut bowl)
+        .await;
 }
