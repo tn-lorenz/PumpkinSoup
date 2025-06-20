@@ -2,14 +2,40 @@ use std::sync::Arc;
 
 use pumpkin::plugin::{Context, EventPriority};
 use pumpkin_api_macros::{plugin_impl, plugin_method};
+use pumpkin_util::{
+    PermissionLvl,
+    permission::{Permission, PermissionDefault},
+};
 
 use crate::listeners::soup_rightclick::SoupRightClickHandler;
 
+pub mod commands;
 pub mod listeners;
+
+async fn register_commands(context: &Context) -> Result<(), String> {
+    let permission = Permission::new(
+        "pumpkinsoup:command.soup",
+        "Access to managing pumpkingverse",
+        PermissionDefault::Op(PermissionLvl::Four),
+    );
+
+    context.register_permission(permission).await?;
+
+    context
+        .register_command(
+            commands::soup_kit_command::init_command_tree(),
+            "pumpkinsoup:command.soup",
+        )
+        .await;
+
+    Ok(())
+}
 
 #[plugin_method]
 async fn on_load(&mut self, server: &Context) -> Result<(), String> {
     pumpkin::init_log!();
+
+    register_commands(server).await?;
 
     server
         .register_event(Arc::new(SoupRightClickHandler), EventPriority::Lowest, true)
