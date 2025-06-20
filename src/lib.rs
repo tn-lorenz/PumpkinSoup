@@ -1,11 +1,11 @@
-use pumpkin_api_macros::{plugin_impl, plugin_method};
 use pumpkin::plugin::Context;
+use pumpkin_api_macros::{plugin_impl, plugin_method};
 
 pub mod listeners;
 
-#[plugin_method] 
+#[plugin_method]
 async fn on_load(&mut self, server: &Context) -> Result<(), String> {
-    pumpkin::init_log!(); 
+    pumpkin::init_log!();
 
     log::info!("PumpkinSoup has been loaded.");
     Ok(())
