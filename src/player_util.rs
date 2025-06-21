@@ -5,6 +5,7 @@ use pumpkin_world::item::ItemStack;
 use std::sync::Arc;
 
 #[async_trait]
+#[allow(dead_code)]
 pub(crate) trait PlayerUtil {
     async fn set_item(&self, slot: i16, item: ItemStack);
     async fn fill_inventory_with_soup(&self);
