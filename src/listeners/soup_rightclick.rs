@@ -16,6 +16,8 @@ use pumpkin_api_macros::with_runtime;
 use pumpkin_data::item::Item;
 use pumpkin_world::item::ItemStack;
 
+use crate::player_util::PlayerUtil;
+
 pub struct SoupRightClickHandler;
 
 #[with_runtime(global)]
@@ -50,8 +52,14 @@ impl EventHandler<PlayerInteractEvent> for SoupRightClickHandler {
 }
 
 pub async fn replace_soup_with_bowl(player: &Arc<Player>) {
+    player
+        .remove_stack(player.inventory().get_selected_slot().into())
+        .await;
+
     sleep(Duration::from_millis(50)).await;
+
     let mut bowl = ItemStack::new(1, &Item::BOWL);
+
     player
         .inventory()
         .insert_stack(player.inventory().get_selected_slot().into(), &mut bowl)

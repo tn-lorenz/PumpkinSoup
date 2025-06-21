@@ -11,6 +11,7 @@ use crate::listeners::soup_rightclick::SoupRightClickHandler;
 
 pub mod commands;
 pub mod listeners;
+pub mod player_util;
 
 async fn register_commands(context: &Context) -> Result<(), String> {
     let permission = Permission::new(

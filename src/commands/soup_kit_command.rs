@@ -16,6 +16,8 @@ use pumpkin::{
 use pumpkin_data::item::Item;
 use pumpkin_world::item::ItemStack;
 
+use crate::player_util::PlayerUtil;
+
 const NAMES: [&str; 2] = ["soup", "soupkit"];
 const DESCRIPTION: &str = "Give yourself a soup kit with a variable recraft amount.";
 const RECRAFT_ARG_NAME: &str = "recraft_amount";
@@ -73,36 +75,6 @@ pub(crate) async fn give_kit(player: &Arc<Player>, recraft_amount: Option<i32>) 
         Some(_) => {}
         None => {
             player.fill_inventory_with_soup().await;
-        }
-    }
-}
-
-#[async_trait::async_trait]
-pub(crate) trait PlayerUtil {
-    async fn set_item(&self, slot: i16, item: ItemStack);
-    async fn fill_inventory_with_soup(&self);
-    async fn clear_inventory(&self);
-}
-
-#[async_trait::async_trait]
-impl PlayerUtil for Arc<Player> {
-    async fn set_item(&self, slot: i16, mut item: ItemStack) {
-        self.inventory().insert_stack(slot, &mut item).await;
-    }
-
-    async fn clear_inventory(&self) {
-        let mut air = ItemStack::new(1, &Item::AIR);
-
-        for i in 0..35 {
-            self.inventory().insert_stack(i, &mut air).await;
-        }
-    }
-
-    async fn fill_inventory_with_soup(&self) {
-        let mut soup = ItemStack::new(1, &Item::MUSHROOM_STEW);
-
-        for i in 0..35 {
-            self.inventory().insert_stack(i, &mut soup).await;
         }
     }
 }
