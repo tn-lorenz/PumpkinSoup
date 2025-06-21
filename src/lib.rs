@@ -15,7 +15,7 @@ pub mod listeners;
 async fn register_commands(context: &Context) -> Result<(), String> {
     let permission = Permission::new(
         "pumpkinsoup:command.soup",
-        "Access to managing pumpkingverse",
+        "Grants access to the /soup command.",
         PermissionDefault::Op(PermissionLvl::Four),
     );
 
@@ -31,15 +31,18 @@ async fn register_commands(context: &Context) -> Result<(), String> {
     Ok(())
 }
 
+async fn register_events(context: &Context) {
+    context
+        .register_event(Arc::new(SoupRightClickHandler), EventPriority::Lowest, true)
+        .await;
+}
+
 #[plugin_method]
 async fn on_load(&mut self, server: &Context) -> Result<(), String> {
     pumpkin::init_log!();
 
     register_commands(server).await?;
-
-    server
-        .register_event(Arc::new(SoupRightClickHandler), EventPriority::Lowest, true)
-        .await;
+    register_events(server).await;
 
     log::info!("PumpkinSoup has been loaded.");
     Ok(())
