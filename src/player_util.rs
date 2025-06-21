@@ -13,6 +13,7 @@ pub(crate) trait PlayerUtil {
 }
 
 #[async_trait]
+#[allow(dead_code)]
 impl PlayerUtil for Arc<Player> {
     async fn set_item(&self, slot: i16, mut item: ItemStack) {
         self.remove_stack(slot.try_into().unwrap()).await;

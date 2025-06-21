@@ -54,7 +54,7 @@ impl EventHandler<PlayerInteractEvent> for SoupRightClickHandler {
 pub async fn replace_soup_with_bowl(player: &Arc<Player>) {
     sleep(Duration::from_millis(50)).await;
 
-    let mut bowl = ItemStack::new(1, &Item::BOWL);
+    let bowl = ItemStack::new(1, &Item::BOWL);
 
     player
         .set_item(player.inventory().get_selected_slot().into(), bowl)
