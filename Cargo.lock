@@ -1778,6 +1778,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "pumpkinsoup"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "log",
+ "pumpkin",
+ "pumpkin-api-macros",
+ "pumpkin-data",
+ "pumpkin-inventory",
+ "pumpkin-util",
+ "pumpkin-world",
+ "tokio",
+]
+
+[[package]]
 name = "quinn"
 version = "0.11.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2298,21 +2313,6 @@ checksum = "e22376abed350d73dd1cd119b57ffccad95b4e585a7cda43e286245ce23c0678"
 dependencies = [
  "libc",
  "windows-sys 0.52.0",
-]
-
-[[package]]
-name = "soup"
-version = "0.1.0"
-dependencies = [
- "async-trait",
- "log",
- "pumpkin",
- "pumpkin-api-macros",
- "pumpkin-data",
- "pumpkin-inventory",
- "pumpkin-util",
- "pumpkin-world",
- "tokio",
 ]
 
 [[package]]

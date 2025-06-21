@@ -14,7 +14,7 @@ pub mod listeners;
 
 async fn register_commands(context: &Context) -> Result<(), String> {
     let permission = Permission::new(
-        "pumpkinsoup:command.soup",
+        "pumpkin-soup:command.soup",
         "Grants access to the /soup command.",
         PermissionDefault::Op(PermissionLvl::Four),
     );
