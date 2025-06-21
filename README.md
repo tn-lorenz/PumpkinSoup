@@ -3,8 +3,7 @@
   # PumpkinSoup
   
  ![Build](https://img.shields.io/github/actions/workflow/status/tn-lorenz/PumpkinSoup/rust.yml?label=CI&branch=main&style=flat-square)
- ![Static Badge](https://img.shields.io/badge/Built_for-PumpkinMC-orange?style=flat-square&link=https%3A%2F%2Fgithub.com%2FPumpkin-MC%2FPumpkin)
-
+ ![Static Badge](https://img.shields.io/badge/%F0%9F%8E%83_Built_for-PumpkinMC-orange?style=flat-square&link=https%3A%2F%2Fgithub.com%2FPumpkin-MC%2FPumpkin)
 
   <p align="center" width="66%">
     <img src="assets\PUMPKING_SOUP_AYOOO.png" alt="Logo" width=66%/>
