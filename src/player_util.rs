@@ -1,4 +1,5 @@
 use async_trait::async_trait;
+use futures::future::join_all;
 use pumpkin::entity::player::Player;
 use pumpkin_data::item::Item;
 use pumpkin_world::item::ItemStack;
@@ -22,17 +23,14 @@ impl PlayerUtil for Arc<Player> {
     }
 
     async fn clear_inventory(&self) {
-        for i in 0..35 {
-            self.remove_stack(i).await;
-        }
+        let futures = (0..35).map(|i| self.remove_stack(i));
+        join_all(futures).await;
     }
 
     async fn fill_inventory_with_soup(&self) {
         let soup = ItemStack::new(1, &Item::MUSHROOM_STEW);
-
-        for i in 0..35 {
-            self.set_item(i, soup).await;
-        }
+        let futures = (0..35).map(|i| self.set_item(i, soup));
+        join_all(futures).await;
     }
 
     async fn remove_stack(&self, slot: usize) -> ItemStack {

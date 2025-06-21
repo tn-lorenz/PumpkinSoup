@@ -1782,6 +1782,7 @@ name = "pumpkinsoup"
 version = "0.1.0"
 dependencies = [
  "async-trait",
+ "futures",
  "log",
  "pumpkin",
  "pumpkin-api-macros",

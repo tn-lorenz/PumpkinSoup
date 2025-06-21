@@ -16,6 +16,7 @@ pumpkin-data = { git = "https://github.com/Pumpkin-MC/Pumpkin.git", branch = "ma
 
 async-trait = "0.1"
 tokio = "1.42"
+futures = "0.3.31"
 log = "0.4"
 
 [profile.release] 
