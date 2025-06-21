@@ -15,6 +15,7 @@ pub(crate) trait PlayerUtil {
 #[async_trait]
 impl PlayerUtil for Arc<Player> {
     async fn set_item(&self, slot: i16, mut item: ItemStack) {
+        self.remove_stack(slot.try_into().unwrap()).await;
         self.inventory().insert_stack(slot, &mut item).await;
     }
 
@@ -25,10 +26,10 @@ impl PlayerUtil for Arc<Player> {
     }
 
     async fn fill_inventory_with_soup(&self) {
-        let mut soup = ItemStack::new(1, &Item::MUSHROOM_STEW);
+        let soup = ItemStack::new(1, &Item::MUSHROOM_STEW);
 
         for i in 0..35 {
-            self.inventory().insert_stack(i, &mut soup).await;
+            self.set_item(i, soup).await;
         }
     }
 

@@ -53,8 +53,6 @@ impl CommandExecutor for SoupKitExecutor {
 }
 
 pub(crate) async fn give_kit(player: &Arc<Player>, recraft_amount: Option<i32>) {
-    player.clear_inventory().await;
-
     match recraft_amount {
         Some(v) if v > 0 => {
             let amount = recraft_amount.unwrap_or(0).clamp(0, u8::MAX as i32) as u8;
