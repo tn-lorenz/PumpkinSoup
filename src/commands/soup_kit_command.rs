@@ -68,19 +68,25 @@ pub(crate) async fn give_kit(player: &Arc<Player>, recraft_amount: Option<i32>) 
             let bowls = ItemStack::new(amount, &Item::BOWL);
             let reds = ItemStack::new(amount, &Item::RED_MUSHROOM);
             let browns = ItemStack::new(amount, &Item::BROWN_MUSHROOM);
+            let sword = ItemStack::new(amount, &Item::STONE_SWORD);
 
             player.fill_inventory_with_soup().await;
 
             player.set_item(13, bowls).await;
             player.set_item(14, reds).await;
             player.set_item(15, browns).await;
+            player.set_item(0, sword).await;
         }
         Some(0) => {
             player.fill_inventory_with_soup().await;
         }
-        Some(_) => {}
-        None => {
+        Some(_) => {
             player.fill_inventory_with_soup().await;
+        }
+        None => {
+            log::error!(
+                "The recraft argument is of type `None`. Idk how you even managed to do that. Wtf."
+            );
         }
     }
 }

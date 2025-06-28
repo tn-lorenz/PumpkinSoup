@@ -1782,7 +1782,6 @@ dependencies = [
  "pumpkin",
  "pumpkin-api-macros",
  "pumpkin-data",
- "pumpkin-inventory",
  "pumpkin-util",
  "pumpkin-world",
  "tokio",

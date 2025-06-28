@@ -42,10 +42,15 @@ impl EventHandler<PlayerInteractEvent> for SoupRightClickHandler {
         }
 
         let old_health = player.living_entity.health.load();
+        let old_hunger_level = player.get_hunger_level().await;
 
-        if old_health < 20.0 {
+        if !(player.is_hungry().await && old_health < 20.0) {
             let new_health = (old_health + 7.0).min(20.0);
             player.set_health(new_health).await;
+            replace_soup_with_bowl(player).await;
+        } else {
+            let new_hunger_level = (old_hunger_level + 7).min(20);
+            player.set_hunger_level(new_hunger_level).await;
             replace_soup_with_bowl(player).await;
         }
     }

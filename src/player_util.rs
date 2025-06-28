@@ -12,6 +12,9 @@ pub(crate) trait PlayerUtil {
     async fn fill_inventory_with_soup(&self);
     async fn clear_inventory(&self);
     async fn remove_stack(&self, slot: usize) -> ItemStack;
+    async fn get_hunger_level(&self) -> u8;
+    async fn set_hunger_level(&self, level: u8);
+    async fn is_hungry(&self) -> bool;
 }
 
 #[async_trait]
@@ -22,14 +25,14 @@ impl PlayerUtil for Arc<Player> {
         self.inventory().insert_stack(slot, &mut item).await;
     }
 
-    async fn clear_inventory(&self) {
-        let futures = (0..35).map(|i| self.remove_stack(i));
+    async fn fill_inventory_with_soup(&self) {
+        let soup = ItemStack::new(1, &Item::MUSHROOM_STEW);
+        let futures = (0..36).map(|i| self.set_item(i, soup));
         join_all(futures).await;
     }
 
-    async fn fill_inventory_with_soup(&self) {
-        let soup = ItemStack::new(1, &Item::MUSHROOM_STEW);
-        let futures = (0..35).map(|i| self.set_item(i, soup));
+    async fn clear_inventory(&self) {
+        let futures = (0..35).map(|i| self.remove_stack(i));
         join_all(futures).await;
     }
 
@@ -48,5 +51,18 @@ impl PlayerUtil for Arc<Player> {
                 .put(slot, ItemStack::EMPTY)
                 .await
         }
+    }
+
+    async fn get_hunger_level(&self) -> u8 {
+        self.hunger_manager.level.load()
+    }
+
+    async fn set_hunger_level(&self, level: u8) {
+        self.hunger_manager.level.store(level.clamp(0, 20));
+        self.send_health().await;
+    }
+
+    async fn is_hungry(&self) -> bool {
+        self.get_hunger_level().await < 20
     }
 }
