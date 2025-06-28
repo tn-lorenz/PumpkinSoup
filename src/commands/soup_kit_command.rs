@@ -14,6 +14,7 @@ use pumpkin::{
 };
 
 use pumpkin_data::item::Item;
+use pumpkin_util::text::TextComponent;
 use pumpkin_world::item::ItemStack;
 
 use crate::player_util::PlayerUtil;
@@ -37,14 +38,21 @@ impl CommandExecutor for SoupKitExecutor {
         };
 
         let CommandSender::Player(player) = sender else {
+            sender
+                .send_message(
+                    TextComponent::text("Only players may use this command.")
+                        .color_named(pumpkin_util::text::color::NamedColor::Red),
+                )
+                .await;
+
             return Err(CommandError::GeneralCommandIssue(
                 "Only players may use this command.".into(),
             ));
         };
 
-        let amount: i32 = recraft_amount.parse().map_err(|_| {
-            CommandError::GeneralCommandIssue("Invalid number for recraft_amount.".into())
-        })?;
+        let amount: i32 = recraft_amount
+            .parse()
+            .map_err(|_| CommandError::GeneralCommandIssue("Invalid recraft amount.".into()))?;
 
         give_kit(player, Some(amount)).await;
 
