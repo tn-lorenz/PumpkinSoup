@@ -13,9 +13,11 @@ pub mod commands;
 pub mod listeners;
 pub mod player_util;
 
+const PLUGIN_NAME: &str = env!("CARGO_PKG_NAME");
+
 async fn register_commands(context: &Context) -> Result<(), String> {
     let permission = Permission::new(
-        "pumpkinsoup:command.soup",
+        &format!("{PLUGIN_NAME}:command.soup"),
         "Grants access to the /soup command.",
         PermissionDefault::Op(PermissionLvl::Four),
     );
@@ -25,7 +27,7 @@ async fn register_commands(context: &Context) -> Result<(), String> {
     context
         .register_command(
             commands::soup_kit_command::init_command_tree(),
-            "pumpkinsoup:command.soup",
+            &format!("{PLUGIN_NAME}:command.soup"),
         )
         .await;
 
