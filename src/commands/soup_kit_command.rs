@@ -2,6 +2,7 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 
+use pumpkin::command::tree::builder::require;
 use pumpkin::{
     command::{
         args::{Arg, ConsumedArgs, simple::SimpleArgConsumer},
@@ -12,7 +13,6 @@ use pumpkin::{
     entity::player::Player,
     server::Server,
 };
-
 use pumpkin_data::item::Item;
 use pumpkin_util::text::TextComponent;
 use pumpkin_world::item::ItemStack;
@@ -23,10 +23,11 @@ const NAMES: [&str; 2] = ["soup", "soupkit"];
 const DESCRIPTION: &str = "Give yourself a soup kit with a variable recraft amount.";
 const RECRAFT_ARG_NAME: &str = "recraft_amount";
 
-struct SoupKitExecutor;
+struct SoupKitExecutorWithArg;
+struct SoupKitExecutorNoArg;
 
 #[async_trait]
-impl CommandExecutor for SoupKitExecutor {
+impl CommandExecutor for SoupKitExecutorWithArg {
     async fn execute<'a>(
         &self,
         sender: &mut CommandSender,
@@ -50,9 +51,17 @@ impl CommandExecutor for SoupKitExecutor {
             ));
         };
 
-        let amount: i32 = recraft_amount
-            .parse()
-            .map_err(|_| CommandError::GeneralCommandIssue("Invalid recraft amount.".into()))?;
+        let amount: u8 = recraft_amount.parse::<u8>().map_err(|_| {
+            CommandError::GeneralCommandIssue(
+                "Invalid argument. Recraft amount must be between 0 and 64.".into(),
+            )
+        })?;
+
+        if amount > 64 {
+            return Err(CommandError::GeneralCommandIssue(
+                "Invalid argument. Recraft amount must be between 0 and 64.".into(),
+            ));
+        }
 
         give_kit(player, Some(amount)).await;
 
@@ -60,15 +69,32 @@ impl CommandExecutor for SoupKitExecutor {
     }
 }
 
-pub(crate) async fn give_kit(player: &Arc<Player>, recraft_amount: Option<i32>) {
+#[async_trait]
+impl CommandExecutor for SoupKitExecutorNoArg {
+    async fn execute<'a>(
+        &self,
+        sender: &mut CommandSender,
+        _server: &Server,
+        _args: &ConsumedArgs<'a>,
+    ) -> Result<(), CommandError> {
+        let target = sender.as_player().ok_or(CommandError::InvalidRequirement)?;
+
+        give_kit(&target, Option::from(0)).await;
+
+        Ok(())
+    }
+}
+
+pub(crate) async fn give_kit(player: &Arc<Player>, recraft_amount: Option<u8>) {
+    let sword = ItemStack::new(1, &Item::STONE_SWORD);
+
     match recraft_amount {
         Some(v) if v > 0 => {
-            let amount = recraft_amount.unwrap_or(0).clamp(0, u8::MAX as i32) as u8;
+            let amount = recraft_amount.unwrap_or(0).clamp(0, 64);
 
             let bowls = ItemStack::new(amount, &Item::BOWL);
             let reds = ItemStack::new(amount, &Item::RED_MUSHROOM);
             let browns = ItemStack::new(amount, &Item::BROWN_MUSHROOM);
-            let sword = ItemStack::new(amount, &Item::STONE_SWORD);
 
             player.fill_inventory_with_soup().await;
 
@@ -79,9 +105,11 @@ pub(crate) async fn give_kit(player: &Arc<Player>, recraft_amount: Option<i32>) 
         }
         Some(0) => {
             player.fill_inventory_with_soup().await;
+            player.set_item(0, sword).await;
         }
         Some(_) => {
             player.fill_inventory_with_soup().await;
+            player.set_item(0, sword).await;
         }
         None => {
             log::error!(
@@ -93,6 +121,6 @@ pub(crate) async fn give_kit(player: &Arc<Player>, recraft_amount: Option<i32>) 
 
 pub fn init_command_tree() -> CommandTree {
     CommandTree::new(NAMES, DESCRIPTION)
-        .then(argument(RECRAFT_ARG_NAME, SimpleArgConsumer).execute(SoupKitExecutor))
-        .execute(SoupKitExecutor)
+        .then(argument(RECRAFT_ARG_NAME, SimpleArgConsumer).execute(SoupKitExecutorWithArg))
+        .then(require(|sender| sender.is_player()).execute(SoupKitExecutorNoArg))
 }
