@@ -12,22 +12,40 @@ use crate::listeners::soup_rightclick::SoupRightClickHandler;
 pub mod commands;
 pub mod listeners;
 pub mod player_util;
+mod task_util;
 
 const PLUGIN_NAME: &str = env!("CARGO_PKG_NAME");
 
 async fn register_commands(context: &Context) -> Result<(), String> {
-    let permission = Permission::new(
+    let soup_kit_permission = Permission::new(
         &format!("{PLUGIN_NAME}:command.soup"),
         "Grants access to the /soup command.",
         PermissionDefault::Op(PermissionLvl::Four),
     );
 
-    context.register_permission(permission).await?;
+    context.register_permission(soup_kit_permission).await?;
 
     context
         .register_command(
             commands::soup_kit_command::init_command_tree(),
             &format!("{PLUGIN_NAME}:command.soup"),
+        )
+        .await;
+
+    //
+
+    let damager_cmd_permission = Permission::new(
+        &format!("{PLUGIN_NAME}:command.damager"),
+        "Grants access to the /damager command.",
+        PermissionDefault::Op(PermissionLvl::Four),
+    );
+
+    context.register_permission(damager_cmd_permission).await?;
+
+    context
+        .register_command(
+            commands::damager_command::init_command_tree(),
+            &format!("{PLUGIN_NAME}:command.damager"),
         )
         .await;
 

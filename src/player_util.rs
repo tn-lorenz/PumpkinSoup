@@ -18,6 +18,7 @@ pub(crate) trait PlayerUtil {
     async fn get_saturation_level(&self) -> f32;
     async fn set_saturation_level(&self, level: f32);
     async fn get_health(&self) -> f32;
+    async fn damage(&self, damage: f32);
     //async fn set_health(&self, health: f32);
     //async fn get_max_health(&self) -> f32;
     //async fn set_max_health(&self, max_health: f32);
@@ -86,5 +87,10 @@ impl PlayerUtil for Arc<Player> {
 
     async fn get_health(&self) -> f32 {
         self.living_entity.health.load()
+    }
+
+    async fn damage(&self, damage: f32) {
+        self.set_health(self.get_health().await - damage).await;
+        self.send_health().await;
     }
 }
