@@ -14,8 +14,9 @@
 
 # Features
 - [X] Instant soup healing
-- [X] /soup <recraft_amount> command that fills the player's inventory with soup and a customizable amount of recraft
 - [X] Regenerating food level instead of health if a player is hungry
+- [X] /soup <recraft_amount> command that fills the player's inventory with soup and a customizable amount of recraft
+- [X] /damager <difficulty> command that initiates a damager task that continously damages the player according to the chosen difficulty (really scuffed rn)
 - [ ] Refill and recraft signs with customizable text*
 - [ ] Cocoa and cactus recraft recipes*
 
