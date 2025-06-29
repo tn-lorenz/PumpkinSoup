@@ -1,5 +1,5 @@
-use crate::damager_state_manager::ACTIVE_UUIDS;
-use crate::player_util::PlayerUtil;
+use crate::damager_state::ACTIVE_UUIDS;
+use crate::util::player_util::PlayerUtil;
 use pumpkin::entity::player::Player;
 use std::{sync::Arc, thread};
 use tokio::runtime::Runtime;

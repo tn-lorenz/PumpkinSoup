@@ -15,7 +15,7 @@ use pumpkin_api_macros::with_runtime;
 use pumpkin_data::item::Item;
 use pumpkin_world::item::ItemStack;
 
-use crate::player_util::PlayerUtil;
+use crate::util::player_util::PlayerUtil;
 
 pub struct SoupRightClickHandler;
 

@@ -17,7 +17,7 @@ use pumpkin_data::item::Item;
 use pumpkin_util::text::TextComponent;
 use pumpkin_world::item::ItemStack;
 
-use crate::player_util::PlayerUtil;
+use crate::util::player_util::PlayerUtil;
 
 const NAMES: [&str; 2] = ["soup", "soupkit"];
 const DESCRIPTION: &str = "Give yourself a soup kit with a variable recraft amount.";
