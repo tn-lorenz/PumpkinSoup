@@ -21,5 +21,6 @@
 - [ ] Cocoa and cactus recraft recipes*
 
 > [!IMPORTANT]
+> The `cargo.lock` currently is based on `Pumpkin 0.1.0-dev+1.21.6 (e0cb262f)`.<br>
 > Pumpkin and this plugin are currently under heavy development.<br>
 > (*): _Pumpkin does not provide the utility to do this as of June 2025_
