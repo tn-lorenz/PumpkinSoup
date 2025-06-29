@@ -17,6 +17,10 @@ pub(crate) trait PlayerUtil {
     async fn is_hungry(&self) -> bool;
     async fn get_saturation_level(&self) -> f32;
     async fn set_saturation_level(&self, level: f32);
+    async fn get_health(&self) -> f32;
+    //async fn set_health(&self, health: f32);
+    //async fn get_max_health(&self) -> f32;
+    //async fn set_max_health(&self, max_health: f32);
 }
 
 #[async_trait]
@@ -76,5 +80,9 @@ impl PlayerUtil for Arc<Player> {
     async fn set_saturation_level(&self, level: f32) {
         self.hunger_manager.saturation.store(level.clamp(0.0, 20.0));
         self.send_health().await;
+    }
+
+    async fn get_health(&self) -> f32 {
+        self.living_entity.health.load()
     }
 }

@@ -22,6 +22,8 @@ use crate::player_util::PlayerUtil;
 const NAMES: [&str; 2] = ["soup", "soupkit"];
 const DESCRIPTION: &str = "Give yourself a soup kit with a variable recraft amount.";
 const RECRAFT_ARG_NAME: &str = "recraft_amount";
+const MSG_INVALID_RC_AMOUNT: &str = "Invalid argument. Recraft amount must be between 0 and 64.";
+const MSG_NOT_PLAYER: &str = "Only players may use this command.";
 
 struct SoupKitExecutorWithArg;
 struct SoupKitExecutorNoArg;
@@ -41,25 +43,21 @@ impl CommandExecutor for SoupKitExecutorWithArg {
         let CommandSender::Player(player) = sender else {
             sender
                 .send_message(
-                    TextComponent::text("Only players may use this command.")
+                    TextComponent::text(MSG_NOT_PLAYER)
                         .color_named(pumpkin_util::text::color::NamedColor::Red),
                 )
                 .await;
 
-            return Err(CommandError::GeneralCommandIssue(
-                "Only players may use this command.".into(),
-            ));
+            return Err(CommandError::GeneralCommandIssue(MSG_NOT_PLAYER.into()));
         };
 
-        let amount: u8 = recraft_amount.parse::<u8>().map_err(|_| {
-            CommandError::GeneralCommandIssue(
-                "Invalid argument. Recraft amount must be between 0 and 64.".into(),
-            )
-        })?;
+        let amount: u8 = recraft_amount
+            .parse::<u8>()
+            .map_err(|_| CommandError::GeneralCommandIssue(MSG_INVALID_RC_AMOUNT.into()))?;
 
         if amount > 64 {
             return Err(CommandError::GeneralCommandIssue(
-                "Invalid argument. Recraft amount must be between 0 and 64.".into(),
+                MSG_INVALID_RC_AMOUNT.into(),
             ));
         }
 
