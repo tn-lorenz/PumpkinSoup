@@ -1777,14 +1777,17 @@ name = "pumpkinsoup"
 version = "0.1.0"
 dependencies = [
  "async-trait",
+ "dashmap",
  "futures",
  "log",
+ "once_cell",
  "pumpkin",
  "pumpkin-api-macros",
  "pumpkin-data",
  "pumpkin-util",
  "pumpkin-world",
  "tokio",
+ "uuid",
 ]
 
 [[package]]

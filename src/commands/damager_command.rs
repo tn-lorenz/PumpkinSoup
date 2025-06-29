@@ -1,20 +1,26 @@
+use std::{str::FromStr, sync::Arc};
+use tokio::time::Duration;
+use uuid::Uuid;
+
 use async_trait::async_trait;
+
+use crate::{damager_state_manager::ACTIVE_UUIDS, task_util::start_damage_loop};
+
 use pumpkin::{
     command::{
+        CommandExecutor, CommandSender,
         args::{Arg, ConsumedArgs, simple::SimpleArgConsumer},
         dispatcher::{CommandError, CommandError::InvalidConsumption},
-        tree::{CommandTree, builder::argument},
-        {CommandExecutor, CommandSender},
+        tree::{
+            CommandTree,
+            builder::{argument, require},
+        },
     },
     entity::player::Player,
     server::Server,
 };
-use pumpkin_util::text::TextComponent;
-use std::str::FromStr;
-use std::sync::Arc;
-use tokio::time::Duration;
 
-use crate::task_util::start_damage_loop;
+use pumpkin_util::text::TextComponent;
 
 const NAMES: [&str; 2] = ["damager", "dmg"];
 const DESCRIPTION: &str =
@@ -69,10 +75,11 @@ impl FromStr for Damager {
     }
 }
 
-struct DamagerExecutor;
+struct DamagerExecutorWithArg;
+struct DamagerExecutorNoArg;
 
 #[async_trait]
-impl CommandExecutor for DamagerExecutor {
+impl CommandExecutor for DamagerExecutorWithArg {
     async fn execute<'a>(
         &self,
         sender: &mut CommandSender,
@@ -98,65 +105,68 @@ impl CommandExecutor for DamagerExecutor {
             .parse::<String>()
             .map_err(|_| CommandError::GeneralCommandIssue(MSG_INVALID_ARG.into()))?;
 
-        handle_input(player, Option::from(damager_type)).await;
+        let uuid = player.gameprofile.id;
+
+        handle_input(player, Option::from(damager_type), uuid).await;
 
         Ok(())
     }
 }
 
-pub(crate) async fn handle_input(player: &Arc<Player>, input: Option<String>) {
-    match input {
-        Some(s) => match Damager::from_str(&s) {
-            Ok(damager) => match damager {
-                Damager::Easy => {
-                    start_damage_loop(
-                        Duration::from_millis(500),
-                        player.clone(),
-                        Damager::Easy.get_damage(),
-                    );
-                }
-                Damager::Medium => {
-                    start_damage_loop(
-                        Duration::from_millis(500),
-                        player.clone(),
-                        Damager::Medium.get_damage(),
-                    );
-                }
-                Damager::Hard => {
-                    start_damage_loop(
-                        Duration::from_millis(500),
-                        player.clone(),
-                        Damager::Hard.get_damage(),
-                    );
-                }
-                Damager::Extreme => {
-                    start_damage_loop(
-                        Duration::from_millis(500),
-                        player.clone(),
-                        Damager::Extreme.get_damage(),
-                    );
-                }
-                Damager::Calamity => {
-                    start_damage_loop(
-                        Duration::from_millis(500),
-                        player.clone(),
-                        Damager::Calamity.get_damage(),
-                    );
-                }
-            },
-            Err(_) => {
-                log::warn!("This damager type does not exist: '{s}'");
+#[async_trait]
+impl CommandExecutor for DamagerExecutorNoArg {
+    async fn execute<'a>(
+        &self,
+        sender: &mut CommandSender,
+        _server: &Server,
+        _args: &ConsumedArgs<'a>,
+    ) -> Result<(), CommandError> {
+        let target = sender.as_player().ok_or(CommandError::InvalidRequirement)?;
+
+        let uuid = target.gameprofile.id;
+
+        if ACTIVE_UUIDS.contains(&uuid) {
+            ACTIVE_UUIDS.remove(&uuid);
+        }
+
+        Ok(())
+    }
+}
+
+fn toggle_damager(uuid: Uuid) {
+    if ACTIVE_UUIDS.contains(&uuid) {
+        ACTIVE_UUIDS.remove(&uuid);
+    } else {
+        ACTIVE_UUIDS.insert(uuid);
+    }
+}
+
+pub(crate) async fn handle_input(player: &Arc<Player>, input: Option<String>, uuid: Uuid) {
+    let Some(s) = input else {
+        log::error!("Damager input is None. How did you even do this?");
+        return;
+    };
+
+    match Damager::from_str(&s) {
+        Ok(damager) => {
+            toggle_damager(uuid);
+
+            if ACTIVE_UUIDS.contains(&uuid) {
+                start_damage_loop(
+                    Duration::from_millis(500),
+                    Arc::clone(player),
+                    damager.get_damage(),
+                );
             }
-        },
-        None => {
-            log::error!(
-                "The damager argument is of type `None`. Idk how you even managed to do that. Wtf."
-            );
+        }
+        Err(_) => {
+            log::warn!("This damager type does not exist: '{s}'");
         }
     }
 }
 
 pub fn init_command_tree() -> CommandTree {
     CommandTree::new(NAMES, DESCRIPTION)
-        .then(argument(DAMAGER_ARG_NAME, SimpleArgConsumer).execute(DamagerExecutor))
+        .then(argument(DAMAGER_ARG_NAME, SimpleArgConsumer).execute(DamagerExecutorWithArg))
+        .then(require(|sender| sender.is_player()).execute(DamagerExecutorNoArg))
 }

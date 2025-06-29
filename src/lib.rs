@@ -10,6 +10,7 @@ use pumpkin_util::{
 use crate::listeners::soup_rightclick::SoupRightClickHandler;
 
 pub mod commands;
+mod damager_state_manager;
 pub mod listeners;
 pub mod player_util;
 mod task_util;

@@ -1,3 +1,4 @@
+use crate::damager_state_manager::ACTIVE_UUIDS;
 use crate::player_util::PlayerUtil;
 use pumpkin::entity::player::Player;
 use std::{sync::Arc, thread};
@@ -16,8 +17,12 @@ pub fn start_damage_loop(delay: Duration, player: Arc<Player>, damage: f32) {
 
 pub(crate) async fn run_task_timer(delay: Duration, player: Arc<Player>, damage: f32) {
     loop {
-        sleep(delay).await;
-        execute_task(Arc::clone(&player), damage).await;
+        if ACTIVE_UUIDS.contains(&player.gameprofile.id) {
+            sleep(delay).await;
+            execute_task(Arc::clone(&player), damage).await;
+        } else {
+            break;
+        }
     }
 }
 
