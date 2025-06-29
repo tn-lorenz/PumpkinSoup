@@ -31,14 +31,16 @@ impl PlayerUtil for Arc<Player> {
         self.inventory().insert_stack(slot, &mut item).await;
     }
 
+    // TODO: Consider clearing off-hand and armor slots.
     async fn fill_inventory_with_soup(&self) {
         let soup = ItemStack::new(1, &Item::MUSHROOM_STEW);
         let futures = (0..36).map(|i| self.set_item(i, soup));
         join_all(futures).await;
     }
 
+    // TODO: Also clear off-hand and armor slots.
     async fn clear_inventory(&self) {
-        let futures = (0..35).map(|i| self.remove_stack(i));
+        let futures = (0..36).map(|i| self.remove_stack(i));
         join_all(futures).await;
     }
 

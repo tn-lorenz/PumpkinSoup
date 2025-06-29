@@ -1,7 +1,6 @@
 use std::sync::Arc;
 
 use async_trait::async_trait;
-use tokio::time::{Duration, sleep};
 
 use pumpkin::{
     entity::player::Player,
@@ -59,8 +58,6 @@ impl EventHandler<PlayerInteractEvent> for SoupRightClickHandler {
 }
 
 pub async fn replace_soup_with_bowl(player: &Arc<Player>) {
-    sleep(Duration::from_millis(50)).await;
-
     let bowl = ItemStack::new(1, &Item::BOWL);
 
     player
