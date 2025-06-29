@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use async_trait::async_trait;
-
+use futures::join;
 use pumpkin::{
     entity::player::Player,
     plugin::{
@@ -46,13 +46,17 @@ impl EventHandler<PlayerInteractEvent> for SoupRightClickHandler {
         // TODO: Get max health instead
         if current_health == 20.0 {
             if player.is_hungry().await {
-                player.set_food_level(current_food_level + 7).await;
                 // player.set_saturation_level((20 - (current_food_level + 7)) as f32).await;
-                replace_soup_with_bowl(player).await;
+                join!(
+                    player.set_food_level(current_food_level + 7),
+                    replace_soup_with_bowl(player),
+                );
             }
         } else {
-            player.set_health((current_health + 7.0).min(20.0)).await;
-            replace_soup_with_bowl(player).await;
+            join!(
+                player.set_health((current_health + 7.0).min(20.0)),
+                replace_soup_with_bowl(player),
+            );
         }
     }
 }
