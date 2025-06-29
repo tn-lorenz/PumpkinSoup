@@ -41,16 +41,18 @@ impl EventHandler<PlayerInteractEvent> for SoupRightClickHandler {
             }
         }
 
-        let old_health = player.living_entity.health.load();
-        let old_hunger_level = player.get_hunger_level().await;
+        let current_health = player.living_entity.health.load();
+        let current_food_level = player.get_food_level().await;
 
-        if !(player.is_hungry().await && old_health < 20.0) {
-            let new_health = (old_health + 7.0).min(20.0);
-            player.set_health(new_health).await;
-            replace_soup_with_bowl(player).await;
+        // TODO: Get max health instead
+        if current_health == 20.0 {
+            if player.is_hungry().await {
+                player.set_food_level(current_food_level + 7).await;
+                // player.set_saturation_level((20 - (current_food_level + 7)) as f32).await;
+                replace_soup_with_bowl(player).await;
+            }
         } else {
-            let new_hunger_level = (old_hunger_level + 7).min(20);
-            player.set_hunger_level(new_hunger_level).await;
+            player.set_health((current_health + 7.0).min(20.0)).await;
             replace_soup_with_bowl(player).await;
         }
     }

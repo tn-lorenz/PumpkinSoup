@@ -12,9 +12,11 @@ pub(crate) trait PlayerUtil {
     async fn fill_inventory_with_soup(&self);
     async fn clear_inventory(&self);
     async fn remove_stack(&self, slot: usize) -> ItemStack;
-    async fn get_hunger_level(&self) -> u8;
-    async fn set_hunger_level(&self, level: u8);
+    async fn get_food_level(&self) -> u8;
+    async fn set_food_level(&self, level: u8);
     async fn is_hungry(&self) -> bool;
+    async fn get_saturation_level(&self) -> f32;
+    async fn set_saturation_level(&self, level: f32);
 }
 
 #[async_trait]
@@ -53,16 +55,26 @@ impl PlayerUtil for Arc<Player> {
         }
     }
 
-    async fn get_hunger_level(&self) -> u8 {
+    async fn get_food_level(&self) -> u8 {
         self.hunger_manager.level.load()
     }
 
-    async fn set_hunger_level(&self, level: u8) {
+    async fn set_food_level(&self, level: u8) {
         self.hunger_manager.level.store(level.clamp(0, 20));
         self.send_health().await;
     }
 
     async fn is_hungry(&self) -> bool {
-        self.get_hunger_level().await < 20
+        self.get_food_level().await < 20
+    }
+
+    async fn get_saturation_level(&self) -> f32 {
+        self.hunger_manager.saturation.load()
+    }
+
+    // TODO: Find out the actual max, this makes no sense
+    async fn set_saturation_level(&self, level: f32) {
+        self.hunger_manager.saturation.store(level.clamp(0.0, 20.0));
+        self.send_health().await;
     }
 }
