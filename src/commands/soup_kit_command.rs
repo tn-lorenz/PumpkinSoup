@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use async_trait::async_trait;
-
+use futures::join;
 use pumpkin::command::tree::builder::require;
 use pumpkin::{
     command::{
@@ -96,10 +96,12 @@ pub(crate) async fn give_kit(player: &Arc<Player>, recraft_amount: Option<u8>) {
 
             player.fill_inventory_with_soup().await;
 
-            player.set_item(13, bowls).await;
-            player.set_item(14, reds).await;
-            player.set_item(15, browns).await;
-            player.set_item(0, sword).await;
+            join!(
+                player.set_item(13, bowls),
+                player.set_item(14, reds),
+                player.set_item(15, browns),
+                player.set_item(0, sword)
+            );
         }
         Some(0) => {
             player.fill_inventory_with_soup().await;
