@@ -20,7 +20,8 @@ const NAMES: [&str; 2] = ["damager", "dmg"];
 const DESCRIPTION: &str =
     "Initiate a damager task that continously damages you according to the chosen difficulty.";
 const DAMAGER_ARG_NAME: &str = "difficulty";
-const MSG_INVALID_ARG: &str = "Invalid argument. Possible options are: easy, medium, hard, extreme, calamity";
+const MSG_INVALID_ARG: &str =
+    "Invalid argument. Possible options are: easy, medium, hard, extreme, calamity";
 const MSG_NOT_PLAYER: &str = "Only players may use this command.";
 
 enum Damager {
