@@ -145,7 +145,7 @@ pub(crate) async fn handle_input(player: &Arc<Player>, input: Option<String>) {
                 }
             },
             Err(_) => {
-                log::warn!("This damager type does not exist: '{}'", s);
+                log::warn!("This damager type does not exist: '{s}'");
             }
         },
         None => {
