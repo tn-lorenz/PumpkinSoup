@@ -2,18 +2,12 @@ use crate::damager_state::ACTIVE_UUIDS;
 use pumpkin::entity::EntityBase;
 use pumpkin::entity::player::Player;
 use pumpkin_data::damage::DamageType;
-use std::{sync::Arc, thread};
-use tokio::runtime::Runtime;
+use std::sync::Arc;
 use tokio::time::{Duration, sleep};
+use crate::TOKIO_RUNTIME;
 
 pub fn start_damage_loop(delay: Duration, player: Arc<Player>, damage: f32) {
-    thread::spawn(move || {
-        let rt = Runtime::new().expect("Failed to create Tokio Runtime");
-
-        rt.block_on(async move {
-            run_task_timer(delay, player, damage).await;
-        });
-    });
+    TOKIO_RUNTIME.spawn(run_task_timer(delay, player, damage));
 }
 
 pub(crate) async fn run_task_timer(delay: Duration, player: Arc<Player>, damage: f32) {

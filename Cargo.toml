@@ -14,7 +14,7 @@ pumpkin-world = { git = "https://github.com/Pumpkin-MC/Pumpkin.git", branch = "m
 pumpkin-data = { git = "https://github.com/Pumpkin-MC/Pumpkin.git", branch = "master", package = "pumpkin-data" }
 
 async-trait = "0.1"
-tokio = "1.42"
+tokio = { version = "1.42", features = ["rt-multi-thread"] }
 futures = "0.3.31"
 log = "0.4"
 dashmap = "6.1.0"

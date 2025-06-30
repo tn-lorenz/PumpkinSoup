@@ -1,12 +1,12 @@
 use std::sync::Arc;
-
+use once_cell::sync::Lazy;
 use pumpkin::plugin::{Context, EventPriority};
 use pumpkin_api_macros::{plugin_impl, plugin_method};
 use pumpkin_util::{
     PermissionLvl,
     permission::{Permission, PermissionDefault},
 };
-
+use tokio::runtime::Runtime;
 use crate::listeners::soup_rightclick::SoupRightClickHandler;
 
 pub mod commands;
@@ -83,3 +83,7 @@ impl Default for Plugin {
         Self::new()
     }
 }
+
+pub static TOKIO_RUNTIME: Lazy<Runtime> = Lazy::new(|| {
+    Runtime::new().expect("Failed to create global Tokio Runtime")
+});
