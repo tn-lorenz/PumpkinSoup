@@ -48,17 +48,19 @@ impl CommandExecutor for SoupKitExecutorWithArg {
                 )
                 .await;
 
-            return Err(CommandError::GeneralCommandIssue(MSG_NOT_PLAYER.into()));
+            return Err(CommandError::CommandFailed(Box::new(TextComponent::text(
+                MSG_NOT_PLAYER,
+            ))));
         };
 
-        let amount: u8 = recraft_amount
-            .parse::<u8>()
-            .map_err(|_| CommandError::GeneralCommandIssue(MSG_INVALID_RC_AMOUNT.into()))?;
+        let amount: u8 = recraft_amount.parse::<u8>().map_err(|_| {
+            CommandError::CommandFailed(Box::new(TextComponent::text(MSG_INVALID_RC_AMOUNT)))
+        })?;
 
         if amount > 64 {
-            return Err(CommandError::GeneralCommandIssue(
-                MSG_INVALID_RC_AMOUNT.into(),
-            ));
+            return Err(CommandError::CommandFailed(Box::new(TextComponent::text(
+                MSG_INVALID_RC_AMOUNT,
+            ))));
         }
 
         give_kit(player, Some(amount)).await;

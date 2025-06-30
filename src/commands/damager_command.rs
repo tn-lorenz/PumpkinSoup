@@ -99,12 +99,14 @@ impl CommandExecutor for DamagerExecutorWithArg {
                 )
                 .await;
 
-            return Err(CommandError::GeneralCommandIssue(MSG_NOT_PLAYER.into()));
+            return Err(CommandError::CommandFailed(Box::new(TextComponent::text(
+                MSG_NOT_PLAYER,
+            ))));
         };
 
-        let damager_type: String = input
-            .parse::<String>()
-            .map_err(|_| CommandError::GeneralCommandIssue(MSG_INVALID_ARG.into()))?;
+        let damager_type: String = input.parse::<String>().map_err(|_| {
+            CommandError::CommandFailed(Box::new(TextComponent::text(MSG_INVALID_ARG)))
+        })?;
 
         let uuid = player.gameprofile.id;
 
