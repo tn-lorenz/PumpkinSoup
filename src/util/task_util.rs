@@ -1,6 +1,7 @@
 use crate::damager_state::ACTIVE_UUIDS;
-use crate::util::player_util::PlayerUtil;
+use pumpkin::entity::EntityBase;
 use pumpkin::entity::player::Player;
+use pumpkin_data::damage::DamageType;
 use std::{sync::Arc, thread};
 use tokio::runtime::Runtime;
 use tokio::time::{Duration, sleep};
@@ -27,5 +28,5 @@ pub(crate) async fn run_task_timer(delay: Duration, player: Arc<Player>, damage:
 }
 
 async fn execute_task(player: Arc<Player>, damage: f32) {
-    player.damage(damage).await;
+    player.damage(damage, DamageType::GENERIC).await;
 }
