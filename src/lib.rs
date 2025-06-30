@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use crate::listeners::soup_rightclick::SoupRightClickHandler;
 use once_cell::sync::Lazy;
 use pumpkin::plugin::{Context, EventPriority};
 use pumpkin_api_macros::{plugin_impl, plugin_method};
@@ -6,8 +6,8 @@ use pumpkin_util::{
     PermissionLvl,
     permission::{Permission, PermissionDefault},
 };
+use std::sync::Arc;
 use tokio::runtime::Runtime;
-use crate::listeners::soup_rightclick::SoupRightClickHandler;
 
 pub mod commands;
 mod damager_state;
@@ -31,8 +31,6 @@ async fn register_commands(context: &Context) -> Result<(), String> {
             &format!("{PLUGIN_NAME}:command.soup"),
         )
         .await;
-
-    //
 
     let damager_cmd_permission = Permission::new(
         &format!("{PLUGIN_NAME}:command.damager"),
@@ -84,6 +82,5 @@ impl Default for Plugin {
     }
 }
 
-pub static TOKIO_RUNTIME: Lazy<Runtime> = Lazy::new(|| {
-    Runtime::new().expect("Failed to create global Tokio Runtime")
-});
+pub static TOKIO_RUNTIME: Lazy<Runtime> =
+    Lazy::new(|| Runtime::new().expect("Failed to create global Tokio Runtime"));

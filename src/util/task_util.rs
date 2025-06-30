@@ -1,10 +1,10 @@
+use crate::TOKIO_RUNTIME;
 use crate::damager_state::ACTIVE_UUIDS;
 use pumpkin::entity::EntityBase;
 use pumpkin::entity::player::Player;
 use pumpkin_data::damage::DamageType;
 use std::sync::Arc;
 use tokio::time::{Duration, sleep};
-use crate::TOKIO_RUNTIME;
 
 pub fn start_damage_loop(delay: Duration, player: Arc<Player>, damage: f32) {
     TOKIO_RUNTIME.spawn(run_task_timer(delay, player, damage));
