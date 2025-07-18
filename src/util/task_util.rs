@@ -8,6 +8,7 @@ use pumpkin::entity::EntityBase;
 use pumpkin::entity::player::Player;
 use pumpkin_data::damage::DamageType;
 use pumpkin_util::text::TextComponent;
+use pumpkin_util::text::color::{Color, NamedColor, RGBColor};
 use std::sync::Arc;
 use tokio::time::{Duration, sleep};
 use uuid::Uuid;
@@ -72,10 +73,17 @@ async fn get_consumable_count(player: Arc<Player>) -> u32 {
 
 async fn print_congratulation_msg(player: Arc<Player>) {
     player
-        .send_system_message(&TextComponent::text("§6§l~ Congratulations! ~"))
+        .send_system_message(
+            &TextComponent::text("-=Congratulations!=-")
+                .color(Color::Rgb(RGBColor::new(123, 223, 242)))
+                .bold(),
+        )
         .await;
     player
-        .send_system_message(&TextComponent::text("§5You completed the damager!"))
+        .send_system_message(
+            &TextComponent::text("You completed the damager!")
+                .color(Color::Rgb(RGBColor::new(123, 223, 242))),
+        )
         .await;
 }
 
@@ -93,27 +101,47 @@ async fn print_completion_msg(
     };
 
     player
-        .send_system_message(&TextComponent::text(
-            "§8§m                                     ",
-        ))
+        .send_system_message(
+            &TextComponent::text("                                     ")
+                .color(Color::Rgb(RGBColor::new(89, 212, 250)))
+                .strikethrough(),
+        )
         .await;
     player
-        .send_system_message(&TextComponent::text(format!("§7Soups slurped: §a{count}")))
+        .send_system_message(
+            &TextComponent::text("Soups slurped: ")
+                .color_named(NamedColor::Gray)
+                .add_child(TextComponent::text(format!("{count}")).color_named(NamedColor::Green)),
+        )
         .await;
     player
-        .send_system_message(&TextComponent::text(format!(
-            "§7Damage taken: §4{} §4❤",
-            damage_count / 2.0
-        )))
+        .send_system_message(
+            &TextComponent::text("Damage taken: ")
+                .color_named(NamedColor::Gray)
+                .add_child(
+                    TextComponent::text(format!("{:.1}", damage_count / 2.0))
+                        .color_named(NamedColor::DarkRed),
+                )
+                .add_child(TextComponent::text(" ❤").color_named(NamedColor::DarkRed)),
+        )
         .await;
     player
-        .send_system_message(&TextComponent::text(format!(
-            "§7Soup accuracy: §6{accuracy:.2}%"
-        )))
+        .send_system_message(
+            &TextComponent::text("Soup accuracy: ")
+                .color_named(NamedColor::Gray)
+                .add_child(
+                    TextComponent::text(format!("{accuracy:.2}%")).color_named(NamedColor::Gold),
+                ),
+        )
         .await;
     player
-        .send_system_message(&TextComponent::text(
-            "§8§m                                     ",
-        ))
+        .send_system_message(
+            &TextComponent::text("§m                                     ")
+                .color(Color::Rgb(RGBColor::new(89, 212, 250)))
+                .strikethrough(),
+        )
         .await;
 }
+
+// .color(Color::Rgb(RGBColor::new(112, 233 ,39))))
+// RGBColor::new(89, 212, 250))
