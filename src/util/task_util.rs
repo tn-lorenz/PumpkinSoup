@@ -1,4 +1,5 @@
 use crate::TOKIO_RUNTIME;
+use crate::commands::soup_kit_command::RECRAFT_AMOUNT;
 use crate::damager_state::ACTIVE_UUIDS;
 use crate::listeners::soup_rightclick::{ACCURATE_SOUPS, CONSUMED_SOUPS};
 use dashmap::DashMap;
@@ -32,7 +33,7 @@ pub(crate) async fn run_task_timer(delay: Duration, player: Arc<Player>, damage:
         }
 
         if let Some(count) = CONSUMED_SOUPS.get(&player.gameprofile.id) {
-            if *count >= 35 {
+            if *count >= get_consumable_count(player.clone()).await {
                 break;
             }
         }
@@ -41,7 +42,7 @@ pub(crate) async fn run_task_timer(delay: Duration, player: Arc<Player>, damage:
     let damage_count = DAMAGE_TAKEN.get(&player.gameprofile.id).unwrap();
     let accurate_soups = ACCURATE_SOUPS.get(&player.gameprofile.id).unwrap();
 
-    if *accurate_soups == 35 {
+    if *accurate_soups == get_consumable_count(player.clone()).await {
         print_congratulation_msg(player.clone()).await;
     }
     print_completion_msg(player.clone(), *count, *damage_count, *accurate_soups).await;
@@ -59,9 +60,19 @@ async fn execute_task(player: Arc<Player>, damage: f32) {
     }
 }
 
+async fn get_consumable_count(player: Arc<Player>) -> u32 {
+    let recraft_amount = RECRAFT_AMOUNT.get(&player.gameprofile.id).unwrap();
+
+    if *recraft_amount > 0 {
+        32 + *recraft_amount as u32
+    } else {
+        35
+    }
+}
+
 async fn print_congratulation_msg(player: Arc<Player>) {
     player
-        .send_system_message(&TextComponent::text("§5§l~ Congratulations! ~"))
+        .send_system_message(&TextComponent::text("§6§l~ Congratulations! ~"))
         .await;
     player
         .send_system_message(&TextComponent::text("§5You completed the damager!"))
@@ -87,7 +98,7 @@ async fn print_completion_msg(
         ))
         .await;
     player
-        .send_system_message(&TextComponent::text(format!("§7Soups slurped: §3{count}")))
+        .send_system_message(&TextComponent::text(format!("§7Soups slurped: §a{count}")))
         .await;
     player
         .send_system_message(&TextComponent::text(format!(

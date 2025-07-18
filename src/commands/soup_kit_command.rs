@@ -1,7 +1,10 @@
 use std::sync::Arc;
 
+use crate::util::player_util::PlayerUtil;
 use async_trait::async_trait;
+use dashmap::DashMap;
 use futures::join;
+use once_cell::sync::Lazy;
 use pumpkin::command::tree::builder::require;
 use pumpkin::{
     command::{
@@ -16,8 +19,7 @@ use pumpkin::{
 use pumpkin_data::item::Item;
 use pumpkin_util::text::TextComponent;
 use pumpkin_world::item::ItemStack;
-
-use crate::util::player_util::PlayerUtil;
+use uuid::Uuid;
 
 const NAMES: [&str; 2] = ["soup", "soupkit"];
 const DESCRIPTION: &str = "Give yourself a soup kit with a variable recraft amount.";
@@ -27,6 +29,8 @@ const MSG_NOT_PLAYER: &str = "Only players may use this command.";
 
 struct SoupKitExecutorWithArg;
 struct SoupKitExecutorNoArg;
+
+pub static RECRAFT_AMOUNT: Lazy<DashMap<Uuid, u8>> = Lazy::new(DashMap::new);
 
 #[async_trait]
 impl CommandExecutor for SoupKitExecutorWithArg {
@@ -118,6 +122,9 @@ pub(crate) async fn give_kit(player: &Arc<Player>, recraft_amount: Option<u8>) {
                 "The recraft argument is of type `None`. Idk how you even managed to do that. Wtf."
             );
         }
+    }
+    if let Some(amount) = recraft_amount {
+        RECRAFT_AMOUNT.insert(player.gameprofile.id, amount);
     }
 }
 
