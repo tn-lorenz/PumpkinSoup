@@ -6,6 +6,7 @@ use pumpkin_data::damage::DamageType;
 use std::sync::Arc;
 use tokio::time::{Duration, sleep};
 
+// TODO: As soon as the `on_player_death` event is available, kill this task and remove the player from `ACTIVE_UUIDS` (need to implement more concise thread handling for that)
 pub fn start_damage_loop(delay: Duration, player: Arc<Player>, damage: f32) {
     TOKIO_RUNTIME.spawn(run_task_timer(delay, player, damage));
 }

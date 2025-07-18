@@ -47,6 +47,28 @@ async fn register_commands(context: &Context) -> Result<(), String> {
         )
         .await;
 
+    /* let pdc_test_permission = Permission::new(
+        &format!("{PLUGIN_NAME}:command.testpdc"),
+        "Grants access to /test and /pdc",
+        PermissionDefault::Op(PermissionLvl::Four),
+    );
+
+     context.register_permission(pdc_test_permission).await?;
+
+    context
+        .register_command(
+            commands::test_add_pdc_command::init_command_tree(),
+            &format!("{PLUGIN_NAME}:command.testpdc"),
+        )
+        .await;
+
+    context
+        .register_command(
+            commands::test_pdc_command::init_command_tree(),
+            &format!("{PLUGIN_NAME}:command.testpdc"),
+        )
+        .await; */
+
     Ok(())
 }
 
