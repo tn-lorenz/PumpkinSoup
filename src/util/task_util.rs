@@ -42,10 +42,9 @@ pub(crate) async fn run_task_timer(delay: Duration, player: Arc<Player>, damage:
     let count = CONSUMED_SOUPS.get(&player.gameprofile.id).unwrap();
     let damage_count = DAMAGE_TAKEN.get(&player.gameprofile.id).unwrap();
     let accurate_soups = ACCURATE_SOUPS.get(&player.gameprofile.id).unwrap();
+    let perfect_run = *accurate_soups == get_consumable_count(player.clone()).await;
 
-    if *accurate_soups == get_consumable_count(player.clone()).await {
-        print_congratulation_msg(player.clone()).await;
-    }
+    print_congratulation_msg(player.clone(), perfect_run).await;
     print_completion_msg(player.clone(), *count, *damage_count, *accurate_soups).await;
 }
 
@@ -71,7 +70,8 @@ async fn get_consumable_count(player: Arc<Player>) -> u32 {
     }
 }
 
-async fn print_congratulation_msg(player: Arc<Player>) {
+async fn print_congratulation_msg(player: Arc<Player>, perfect_run: bool) {
+    let state = if perfect_run { "completed" } else { "survived" };
     player
         .send_system_message(
             &TextComponent::text("-=Congratulations!=-")
@@ -81,7 +81,7 @@ async fn print_congratulation_msg(player: Arc<Player>) {
         .await;
     player
         .send_system_message(
-            &TextComponent::text("You completed the damager!")
+            &TextComponent::text(format!("You {state} the damager!"))
                 .color(Color::Rgb(RGBColor::new(123, 223, 242))),
         )
         .await;
@@ -122,7 +122,7 @@ async fn print_completion_msg(
                     TextComponent::text(format!("{:.1}", damage_count / 2.0))
                         .color_named(NamedColor::DarkRed),
                 )
-                .add_child(TextComponent::text(" ❤").color_named(NamedColor::DarkRed)),
+                .add_child(TextComponent::text("❤").color_named(NamedColor::DarkRed)),
         )
         .await;
     player
