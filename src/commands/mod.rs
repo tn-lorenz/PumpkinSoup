@@ -1,12 +1,19 @@
+use crate::commands::damager_command::build_invalid_arg_msg;
+use crate::config::DAMAGERS;
+use crate::damager::Damager;
 use async_trait::async_trait;
-use pumpkin::command::args::{Arg, ArgumentConsumer, ConsumedArgs, DefaultNameArgConsumer, FindArg, GetClientSideArgParser};
 use pumpkin::command::CommandSender;
+use pumpkin::command::args::{
+    Arg, ArgumentConsumer, ConsumedArgs, DefaultNameArgConsumer, FindArg, GetClientSideArgParser,
+};
 use pumpkin::command::dispatcher::CommandError;
-use pumpkin::command::dispatcher::CommandError::InvalidConsumption;
+use pumpkin::command::dispatcher::CommandError::{CommandFailed, InvalidConsumption};
 use pumpkin::command::tree::RawArgs;
 use pumpkin::server::Server;
-use pumpkin_protocol::java::client::play::{ArgumentType, CommandSuggestion, StringProtoArgBehavior, SuggestionProviders};
-use crate::damager::Damager;
+use pumpkin_protocol::java::client::play::{
+    ArgumentType, CommandSuggestion, StringProtoArgBehavior, SuggestionProviders,
+};
+use pumpkin_util::text::TextComponent;
 
 pub(crate) mod damager_command;
 pub mod soup_kit_command;
@@ -35,7 +42,7 @@ impl ArgumentConsumer for DamagerArgumentConsumer {
     ) -> Option<Arg<'a>> {
         let s = args.pop()?;
 
-        if crate::config::damagers::DAMAGERS.iter().any(|d| d.name.eq_ignore_ascii_case(s)) {
+        if DAMAGERS.iter().any(|d| d.name.eq_ignore_ascii_case(s)) {
             Some(Arg::Simple(s))
         } else {
             None
@@ -48,7 +55,7 @@ impl ArgumentConsumer for DamagerArgumentConsumer {
         _server: &'a Server,
         _input: &'a str,
     ) -> Result<Option<Vec<CommandSuggestion>>, CommandError> {
-        let suggestions = crate::config::damagers::DAMAGERS
+        let suggestions = DAMAGERS
             .iter()
             .map(|d| CommandSuggestion::new(d.name.clone(), None))
             .collect();
@@ -68,7 +75,15 @@ impl<'a> FindArg<'a> for DamagerArgumentConsumer {
 
     fn find_arg(args: &'a ConsumedArgs, name: &str) -> Result<Self::Data, CommandError> {
         match args.get(name) {
-            Some(Arg::Simple(data)) => Ok((*data).parse().unwrap()),
+            Some(Arg::Simple(s)) => {
+                if DAMAGERS.iter().any(|d| d.name.eq_ignore_ascii_case(s)) {
+                    Ok(s.to_string().parse().unwrap())
+                } else {
+                    Err(CommandFailed(Box::new(TextComponent::text(
+                        build_invalid_arg_msg(),
+                    ))))
+                }
+            }
             _ => Err(InvalidConsumption(Some(name.to_string()))),
         }
     }

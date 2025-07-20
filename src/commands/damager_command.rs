@@ -1,4 +1,4 @@
-use std::{str::FromStr, sync::Arc};
+use std::sync::Arc;
 use tokio::time::Duration;
 use uuid::Uuid;
 
@@ -7,6 +7,9 @@ use async_trait::async_trait;
 use crate::damager::damager_state::ACTIVE_UUIDS;
 use crate::util::task_util::start_damage_loop;
 
+use crate::commands::DamagerArgumentConsumer;
+use crate::config::DAMAGERS;
+use pumpkin::command::dispatcher::CommandError::CommandFailed;
 use pumpkin::{
     command::{
         CommandExecutor, CommandSender,
@@ -21,59 +24,28 @@ use pumpkin::{
     server::Server,
 };
 use pumpkin_util::text::TextComponent;
-use crate::commands::DamagerArgumentConsumer;
 
 const NAMES: [&str; 2] = ["damager", "dmg"];
 const DESCRIPTION: &str =
     "Initiate a damager task that continously damages you according to the chosen difficulty.";
 const DAMAGER_ARG_NAME: &str = "difficulty";
-const MSG_INVALID_ARG: &str =
-    "Invalid argument. Possible options are: easy, medium, hard, extreme, calamity";
 const MSG_NOT_PLAYER: &str = "Only players may use this command.";
 
-enum Damager {
-    Easy,
-    Medium,
-    Hard,
-    Extreme,
-    Calamity,
-}
-#[allow(dead_code)]
-impl Damager {
-    pub fn get_name(&self) -> &'static str {
-        match self {
-            Damager::Easy => "Easy",
-            Damager::Medium => "Medium",
-            Damager::Hard => "Hard",
-            Damager::Extreme => "Extreme",
-            Damager::Calamity => "Calamity",
+pub fn build_invalid_arg_msg() -> String {
+    use std::fmt::Write;
+
+    let mut msg = String::from("Invalid argument. Possible options are: ");
+    let mut first = true;
+
+    for damager in DAMAGERS.iter() {
+        if !first {
+            let _ = write!(msg, ", ");
         }
+        let _ = write!(msg, "{}", damager.name);
+        first = false;
     }
 
-    pub fn get_damage(&self) -> f32 {
-        match self {
-            Damager::Easy => 4.0,
-            Damager::Medium => 5.0,
-            Damager::Hard => 7.0,
-            Damager::Extreme => 9.0,
-            Damager::Calamity => 12.0,
-        }
-    }
-}
-
-impl FromStr for Damager {
-    type Err = ();
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s.to_lowercase().as_str() {
-            "easy" => Ok(Damager::Easy),
-            "medium" => Ok(Damager::Medium),
-            "hard" => Ok(Damager::Hard),
-            "extreme" => Ok(Damager::Extreme),
-            "calamity" => Ok(Damager::Calamity),
-            _ => Err(()),
-        }
-    }
+    msg
 }
 
 struct DamagerExecutorWithArg;
@@ -99,18 +71,14 @@ impl CommandExecutor for DamagerExecutorWithArg {
                 )
                 .await;
 
-            return Err(CommandError::CommandFailed(Box::new(TextComponent::text(
-                MSG_NOT_PLAYER,
-            ))));
+            return Err(CommandFailed(Box::new(TextComponent::text(MSG_NOT_PLAYER))));
         };
 
-        let damager_type: String = input.parse::<String>().map_err(|_| {
-            CommandError::CommandFailed(Box::new(TextComponent::text(MSG_INVALID_ARG)))
-        })?;
+        let damager_type = input.to_string();
 
         let uuid = player.gameprofile.id;
 
-        handle_input(player, Option::from(damager_type), uuid).await;
+        let _ = handle_input(player, Option::from(damager_type), uuid).await;
 
         Ok(())
     }
@@ -144,27 +112,37 @@ fn toggle_damager(uuid: Uuid) {
     }
 }
 
-pub(crate) async fn handle_input(player: &Arc<Player>, input: Option<String>, uuid: Uuid) {
+pub(crate) async fn handle_input(
+    player: &Arc<Player>,
+    input: Option<String>,
+    uuid: Uuid,
+) -> Result<(), CommandError> {
     let Some(s) = input else {
         log::error!("Damager input is None. How did you even do this?");
-        return;
+        return Ok(());
     };
 
-    match Damager::from_str(&s) {
-        Ok(damager) => {
+    let maybe_damager = DAMAGERS
+        .iter()
+        .find(|d| d.name.eq_ignore_ascii_case(&s))
+        .map(|d| d.clone());
+
+    match maybe_damager {
+        Some(damager) => {
             toggle_damager(uuid);
 
             if ACTIVE_UUIDS.contains(&uuid) {
                 start_damage_loop(
-                    Duration::from_millis(500),
+                    Duration::from_millis(damager.delay as u64),
                     Arc::clone(player),
-                    damager.get_damage(),
+                    damager.damage as f32,
                 );
             }
+            Ok(())
         }
-        Err(_) => {
-            log::warn!("This damager type does not exist: '{s}'");
-        }
+        None => Err(CommandFailed(Box::new(TextComponent::text(
+            build_invalid_arg_msg(),
+        )))),
     }
 }
 

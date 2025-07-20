@@ -1,8 +1,8 @@
+use crate::damager::Damager;
 use dashmap::DashSet;
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
-use crate::damager::Damager;
 
 pub static DAMAGERS: Lazy<DashSet<Damager>> = Lazy::new(DashSet::new);
 
@@ -59,7 +59,7 @@ impl Default for DamagerConfig {
             "zero_tick".to_string(),
             DamagerSettings {
                 damage: 1.0,
-                delay: 1,
+                delay: 20,
             },
         );
 

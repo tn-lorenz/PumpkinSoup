@@ -1,5 +1,5 @@
-use std::str::FromStr;
 use crate::config::DAMAGERS;
+use std::str::FromStr;
 
 pub mod damager_state;
 
