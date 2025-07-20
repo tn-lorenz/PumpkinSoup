@@ -4,7 +4,7 @@ use uuid::Uuid;
 
 use async_trait::async_trait;
 
-use crate::damager_state::ACTIVE_UUIDS;
+use crate::damager::damager_state::ACTIVE_UUIDS;
 use crate::util::task_util::start_damage_loop;
 
 use pumpkin::{

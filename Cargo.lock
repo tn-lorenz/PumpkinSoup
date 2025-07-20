@@ -1590,7 +1590,9 @@ dependencies = [
  "pumpkin-data",
  "pumpkin-util",
  "pumpkin-world",
+ "serde",
  "tokio",
+ "toml",
  "uuid",
 ]
 

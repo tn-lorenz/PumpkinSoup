@@ -1,6 +1,6 @@
 use crate::TOKIO_RUNTIME;
 use crate::commands::soup_kit_command::RECRAFT_AMOUNT;
-use crate::damager_state::ACTIVE_UUIDS;
+use crate::damager::damager_state::ACTIVE_UUIDS;
 use crate::listeners::soup_rightclick::{ACCURATE_SOUPS, CONSUMED_SOUPS};
 use dashmap::DashMap;
 use once_cell::sync::Lazy;

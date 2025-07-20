@@ -13,7 +13,7 @@ use pumpkin::{
     server::Server,
 };
 
-use crate::damager_state::ACTIVE_UUIDS;
+use crate::damager::damager_state::ACTIVE_UUIDS;
 use crate::util::player_util::PlayerUtil;
 use pumpkin_api_macros::with_runtime;
 use pumpkin_data::item::Item;

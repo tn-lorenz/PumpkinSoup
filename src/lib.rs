@@ -10,11 +10,17 @@ use std::sync::Arc;
 use tokio::runtime::Runtime;
 
 pub mod commands;
-mod damager_state;
+mod config;
+mod damager;
 pub mod listeners;
 mod util;
 
+use crate::config::{DAMAGER_CONFIG, DAMAGERS, Damager};
+
 const PLUGIN_NAME: &str = env!("CARGO_PKG_NAME");
+
+pub static TOKIO_RUNTIME: Lazy<Runtime> =
+    Lazy::new(|| Runtime::new().expect("Failed to create global Tokio Runtime"));
 
 async fn register_commands(context: &Context) -> Result<(), String> {
     let soup_kit_permission = Permission::new(
@@ -82,6 +88,14 @@ async fn register_events(context: &Context) {
 async fn on_load(&mut self, server: &Context) -> Result<(), String> {
     pumpkin::init_log!();
 
+    for (name, settings) in &DAMAGER_CONFIG.damagers {
+        DAMAGERS.insert(Damager {
+            name: name.clone(),
+            damage: settings.damage as i32,
+            delay: settings.delay as u32,
+        });
+    }
+
     register_commands(server).await?;
     register_events(server).await;
 
@@ -103,6 +117,3 @@ impl Default for Plugin {
         Self::new()
     }
 }
-
-pub static TOKIO_RUNTIME: Lazy<Runtime> =
-    Lazy::new(|| Runtime::new().expect("Failed to create global Tokio Runtime"));
