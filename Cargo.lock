@@ -1588,6 +1588,7 @@ dependencies = [
  "pumpkin",
  "pumpkin-api-macros",
  "pumpkin-data",
+ "pumpkin-protocol",
  "pumpkin-util",
  "pumpkin-world",
  "serde",

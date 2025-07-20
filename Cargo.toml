@@ -12,6 +12,7 @@ pumpkin-util = { git = "https://github.com/PumpkinPlugins/PumpkinCE", branch = "
 pumpkin-api-macros = { git = "https://github.com/PumpkinPlugins/PumpkinCE", branch = "master" }
 pumpkin-world = { git = "https://github.com/PumpkinPlugins/PumpkinCE", branch = "master" }
 pumpkin-data = { git = "https://github.com/PumpkinPlugins/PumpkinCE", branch = "master" }
+pumpkin-protocol = { git = "https://github.com/PumpkinPlugins/PumpkinCE", branch = "master" }
 
 async-trait = "0.1.88"
 tokio = { version = "1.46.1", features = ["rt-multi-thread"] }

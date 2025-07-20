@@ -6,7 +6,7 @@ use std::sync::LazyLock;
 use std::{env, fs};
 
 pub mod damagers;
-pub use damagers::{DAMAGERS, Damager, DamagerConfig};
+pub use damagers::{DAMAGERS, DamagerConfig};
 
 const CONFIG_ROOT_FOLDER: &str = "plugins/pumpkinsoup/";
 

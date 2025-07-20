@@ -15,7 +15,8 @@ mod damager;
 pub mod listeners;
 mod util;
 
-use crate::config::{DAMAGER_CONFIG, DAMAGERS, Damager};
+use crate::config::{DAMAGER_CONFIG, DAMAGERS};
+use crate::damager::Damager;
 
 const PLUGIN_NAME: &str = env!("CARGO_PKG_NAME");
 

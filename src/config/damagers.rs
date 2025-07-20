@@ -2,15 +2,9 @@ use dashmap::DashSet;
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
+use crate::damager::Damager;
 
 pub static DAMAGERS: Lazy<DashSet<Damager>> = Lazy::new(DashSet::new);
-
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub struct Damager {
-    pub name: String,
-    pub damage: i32,
-    pub delay: u32,
-}
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct DamagerSettings {

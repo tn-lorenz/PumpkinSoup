@@ -10,7 +10,7 @@ use crate::util::task_util::start_damage_loop;
 use pumpkin::{
     command::{
         CommandExecutor, CommandSender,
-        args::{Arg, ConsumedArgs, simple::SimpleArgConsumer},
+        args::{Arg, ConsumedArgs},
         dispatcher::{CommandError, CommandError::InvalidConsumption},
         tree::{
             CommandTree,
@@ -20,8 +20,8 @@ use pumpkin::{
     entity::player::Player,
     server::Server,
 };
-
 use pumpkin_util::text::TextComponent;
+use crate::commands::DamagerArgumentConsumer;
 
 const NAMES: [&str; 2] = ["damager", "dmg"];
 const DESCRIPTION: &str =
@@ -170,6 +170,6 @@ pub(crate) async fn handle_input(player: &Arc<Player>, input: Option<String>, uu
 
 pub fn init_command_tree() -> CommandTree {
     CommandTree::new(NAMES, DESCRIPTION)
-        .then(argument(DAMAGER_ARG_NAME, SimpleArgConsumer).execute(DamagerExecutorWithArg))
+        .then(argument(DAMAGER_ARG_NAME, DamagerArgumentConsumer).execute(DamagerExecutorWithArg))
         .then(require(|sender| sender.is_player()).execute(DamagerExecutorNoArg))
 }
