@@ -3,20 +3,22 @@ use once_cell::sync::Lazy;
 use pumpkin::plugin::{Context, EventPriority};
 use pumpkin_api_macros::{plugin_impl, plugin_method};
 use pumpkin_util::{
-    PermissionLvl,
     permission::{Permission, PermissionDefault},
+    PermissionLvl,
 };
 use std::sync::Arc;
 use tokio::runtime::Runtime;
+
+use crate::config::DAMAGERS;
+use crate::damager::Damager;
+use crate::util::global::set_context;
+use crate::config::DAMAGER_CONFIG;
 
 pub mod commands;
 mod config;
 mod damager;
 pub mod listeners;
 mod util;
-
-use crate::config::{DAMAGER_CONFIG, DAMAGERS};
-use crate::damager::Damager;
 
 const PLUGIN_NAME: &str = env!("CARGO_PKG_NAME");
 
@@ -96,6 +98,8 @@ async fn on_load(&mut self, server: &Context) -> Result<(), String> {
             delay: settings.delay as u32,
         });
     }
+
+    set_context(server.clone());
 
     register_commands(server).await?;
     register_events(server).await;

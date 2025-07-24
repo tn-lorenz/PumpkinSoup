@@ -10,20 +10,19 @@ use crate::util::task_util::start_damage_loop;
 use crate::commands::DamagerArgumentConsumer;
 use crate::config::DAMAGERS;
 use pumpkin::command::dispatcher::CommandError::CommandFailed;
-use pumpkin::{
-    command::{
-        CommandExecutor, CommandSender,
-        args::{Arg, ConsumedArgs},
-        dispatcher::{CommandError, CommandError::InvalidConsumption},
-        tree::{
-            CommandTree,
-            builder::{argument, require},
-        },
+use pumpkin::{command::{
+    CommandExecutor, CommandSender,
+    args::{Arg, ConsumedArgs},
+    dispatcher::{CommandError, CommandError::InvalidConsumption},
+    tree::{
+        CommandTree,
+        builder::{argument, require},
     },
-    entity::player::Player,
-    server::Server,
-};
+}, entity::player::Player, run_task_later, run_task_timer, server::Server};
+use pumpkin::entity::EntityBase;
+use pumpkin_data::damage::DamageType;
 use pumpkin_util::text::TextComponent;
+use crate::util::global::get_context;
 
 const NAMES: [&str; 2] = ["damager", "dmg"];
 const DESCRIPTION: &str =
@@ -89,7 +88,7 @@ impl CommandExecutor for DamagerExecutorNoArg {
     async fn execute<'a>(
         &self,
         sender: &mut CommandSender,
-        _server: &Server,
+        server: &Server,
         _args: &ConsumedArgs<'a>,
     ) -> Result<(), CommandError> {
         let target = sender.as_player().ok_or(CommandError::InvalidRequirement)?;
@@ -99,6 +98,17 @@ impl CommandExecutor for DamagerExecutorNoArg {
         if ACTIVE_UUIDS.contains(&uuid) {
             ACTIVE_UUIDS.remove(&uuid);
         }
+
+        let target_clone = Arc::clone(&target);
+
+        run_task_timer!(get_context().server.clone(), 10, {
+            let target = Arc::clone(&target_clone);
+            target.damage(4.0, DamageType::GENERIC).await;
+        });
+
+        run_task_later!(server, 20 * 3, {
+            target.send_system_message(&TextComponent::text("This message has been printed after 3 seconds!")).await;
+        });
 
         Ok(())
     }

@@ -7,12 +7,18 @@ edition = "2024"
 crate-type = ["cdylib"]
 
 [dependencies]
-pumpkin = { git = "https://github.com/PumpkinPlugins/PumpkinCE", branch = "master" }
-pumpkin-util = { git = "https://github.com/PumpkinPlugins/PumpkinCE", branch = "master" }
-pumpkin-api-macros = { git = "https://github.com/PumpkinPlugins/PumpkinCE", branch = "master" }
-pumpkin-world = { git = "https://github.com/PumpkinPlugins/PumpkinCE", branch = "master" }
-pumpkin-data = { git = "https://github.com/PumpkinPlugins/PumpkinCE", branch = "master" }
-pumpkin-protocol = { git = "https://github.com/PumpkinPlugins/PumpkinCE", branch = "master" }
+# pumpkin = { git = "https://github.com/PumpkinPlugins/PumpkinCE", branch = "master" }
+# pumpkin-util = { git = "https://github.com/PumpkinPlugins/PumpkinCE", branch = "master" }
+# pumpkin-api-macros = { git = "https://github.com/PumpkinPlugins/PumpkinCE", branch = "master" }
+# pumpkin-world = { git = "https://github.com/PumpkinPlugins/PumpkinCE", branch = "master" }
+# pumpkin-data = { git = "https://github.com/PumpkinPlugins/PumpkinCE", branch = "master" }
+# pumpkin-protocol = { git = "https://github.com/PumpkinPlugins/PumpkinCE", branch = "master" }
+pumpkin = { git = "https://github.com/tn-lorenz/Pumpkin", branch = "feat-schedulers" }
+pumpkin-util = { git = "https://github.com/tn-lorenz/Pumpkin", branch = "feat-schedulers" }
+pumpkin-api-macros = { git = "https://github.com/tn-lorenz/Pumpkin", branch = "feat-schedulers" }
+pumpkin-world = { git = "https://github.com/tn-lorenz/Pumpkin", branch = "feat-schedulers" }
+pumpkin-data = { git = "https://github.com/tn-lorenz/Pumpkin", branch = "feat-schedulers" }
+pumpkin-protocol = { git = "https://github.com/tn-lorenz/Pumpkin", branch = "feat-schedulers" }
 
 async-trait = "0.1.88"
 tokio = { version = "1.46.1", features = ["rt-multi-thread"] }
