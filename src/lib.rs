@@ -3,16 +3,16 @@ use once_cell::sync::Lazy;
 use pumpkin::plugin::{Context, EventPriority};
 use pumpkin_api_macros::{plugin_impl, plugin_method};
 use pumpkin_util::{
-    permission::{Permission, PermissionDefault},
     PermissionLvl,
+    permission::{Permission, PermissionDefault},
 };
 use std::sync::Arc;
 use tokio::runtime::Runtime;
 
+use crate::config::DAMAGER_CONFIG;
 use crate::config::DAMAGERS;
 use crate::damager::Damager;
 use crate::util::global::set_context;
-use crate::config::DAMAGER_CONFIG;
 
 pub mod commands;
 mod config;

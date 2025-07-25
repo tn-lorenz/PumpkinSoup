@@ -9,20 +9,25 @@ use crate::util::task_util::start_damage_loop;
 
 use crate::commands::DamagerArgumentConsumer;
 use crate::config::DAMAGERS;
+use crate::util::global::get_context;
 use pumpkin::command::dispatcher::CommandError::CommandFailed;
-use pumpkin::{command::{
-    CommandExecutor, CommandSender,
-    args::{Arg, ConsumedArgs},
-    dispatcher::{CommandError, CommandError::InvalidConsumption},
-    tree::{
-        CommandTree,
-        builder::{argument, require},
-    },
-}, entity::player::Player, run_task_later, run_task_timer, server::Server};
 use pumpkin::entity::EntityBase;
+use pumpkin::{
+    command::{
+        CommandExecutor, CommandSender,
+        args::{Arg, ConsumedArgs},
+        dispatcher::{CommandError, CommandError::InvalidConsumption},
+        tree::{
+            CommandTree,
+            builder::{argument, require},
+        },
+    },
+    entity::player::Player,
+    run_task_later, run_task_timer,
+    server::Server,
+};
 use pumpkin_data::damage::DamageType;
 use pumpkin_util::text::TextComponent;
-use crate::util::global::get_context;
 
 const NAMES: [&str; 2] = ["damager", "dmg"];
 const DESCRIPTION: &str =
@@ -55,7 +60,7 @@ impl CommandExecutor for DamagerExecutorWithArg {
     async fn execute<'a>(
         &self,
         sender: &mut CommandSender,
-        _server: &Server,
+        server: &Server,
         args: &ConsumedArgs<'a>,
     ) -> Result<(), CommandError> {
         let Some(Arg::Simple(input)) = args.get(DAMAGER_ARG_NAME) else {
@@ -77,7 +82,7 @@ impl CommandExecutor for DamagerExecutorWithArg {
 
         let uuid = player.gameprofile.id;
 
-        let _ = handle_input(player, Option::from(damager_type), uuid).await;
+        let _ = handle_input(player.clone(), Option::from(damager_type), uuid, server).await;
 
         Ok(())
     }
@@ -88,7 +93,7 @@ impl CommandExecutor for DamagerExecutorNoArg {
     async fn execute<'a>(
         &self,
         sender: &mut CommandSender,
-        server: &Server,
+        _server: &Server,
         _args: &ConsumedArgs<'a>,
     ) -> Result<(), CommandError> {
         let target = sender.as_player().ok_or(CommandError::InvalidRequirement)?;
@@ -98,17 +103,6 @@ impl CommandExecutor for DamagerExecutorNoArg {
         if ACTIVE_UUIDS.contains(&uuid) {
             ACTIVE_UUIDS.remove(&uuid);
         }
-
-        let target_clone = Arc::clone(&target);
-
-        run_task_timer!(get_context().server.clone(), 10, {
-            let target = Arc::clone(&target_clone);
-            target.damage(4.0, DamageType::GENERIC).await;
-        });
-
-        run_task_later!(server, 20 * 3, {
-            target.send_system_message(&TextComponent::text("This message has been printed after 3 seconds!")).await;
-        });
 
         Ok(())
     }
@@ -123,9 +117,10 @@ fn toggle_damager(uuid: Uuid) {
 }
 
 pub(crate) async fn handle_input(
-    player: &Arc<Player>,
+    player: Arc<Player>,
     input: Option<String>,
     uuid: Uuid,
+    server: &Server,
 ) -> Result<(), CommandError> {
     let Some(s) = input else {
         log::error!("Damager input is None. How did you even do this?");
@@ -142,11 +137,22 @@ pub(crate) async fn handle_input(
             toggle_damager(uuid);
 
             if ACTIVE_UUIDS.contains(&uuid) {
-                start_damage_loop(
-                    Duration::from_millis(damager.delay as u64),
-                    Arc::clone(player),
-                    damager.damage as f32,
-                );
+                // TODO: reintroduce fetching delay time from .toml
+                run_task_timer!(server, 10, |handle| {
+                    let player = player.clone();
+
+                    async move {
+                        let new_health = player.living_entity.health.load() - damager.damage as f32;
+                        if new_health <= 0.0 {
+                            player.living_entity.health.store(0.0);
+                            handle.cancel().await;
+                            ACTIVE_UUIDS.remove(&uuid);
+                            return;
+                        }
+
+                        player.damage(damager.damage as f32, DamageType::GENERIC).await;
+                    }
+                });
             }
             Ok(())
         }
