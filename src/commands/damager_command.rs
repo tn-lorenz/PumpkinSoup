@@ -145,7 +145,7 @@ pub(crate) async fn handle_input(
                         let new_health = player.living_entity.health.load() - damager.damage as f32;
                         if new_health <= 0.0 {
                             player.living_entity.health.store(0.0);
-                            handle.cancel().await;
+                            handle.cancel();
                             ACTIVE_UUIDS.remove(&uuid);
                             return;
                         }
