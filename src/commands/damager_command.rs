@@ -138,7 +138,7 @@ pub(crate) async fn handle_input(
 
             if ACTIVE_UUIDS.contains(&uuid) {
                 // TODO: reintroduce fetching delay time from .toml
-                run_task_timer!(server, 10, |handle| {
+                run_task_timer!(server, ticks = 10, |handle| {
                     let player = player.clone();
 
                     async move {
@@ -150,7 +150,9 @@ pub(crate) async fn handle_input(
                             return;
                         }
 
-                        player.damage(damager.damage as f32, DamageType::GENERIC).await;
+                        player
+                            .damage(damager.damage as f32, DamageType::GENERIC)
+                            .await;
                     }
                 });
             }
