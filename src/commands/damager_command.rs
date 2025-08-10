@@ -160,10 +160,10 @@ pub(crate) async fn handle_input(
                             return;
                         }
 
-                        if let Some(count) = CONSUMED_SOUPS.get(&uuid) {
-                            if *count >= get_consumable_count(&player.clone()).await {
-                                return;
-                            }
+                        if let Some(count) = CONSUMED_SOUPS.get(&uuid)
+                            && *count >= get_consumable_count(&player.clone()).await
+                        {
+                            return;
                         }
 
                         player

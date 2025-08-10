@@ -23,7 +23,7 @@ pub mod soup_kit_command;
 pub struct DamagerArgumentConsumer;
 
 impl GetClientSideArgParser for DamagerArgumentConsumer {
-    fn get_client_side_parser(&self) -> ArgumentType {
+    fn get_client_side_parser(&self) -> ArgumentType<'_> {
         ArgumentType::String(StringProtoArgBehavior::SingleWord)
     }
 
