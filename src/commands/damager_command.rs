@@ -1,15 +1,12 @@
 use std::sync::Arc;
-use tokio::time::Duration;
 use uuid::Uuid;
 
 use async_trait::async_trait;
 
 use crate::damager::damager_state::ACTIVE_UUIDS;
-use crate::util::task_util::start_damage_loop;
 
 use crate::commands::DamagerArgumentConsumer;
 use crate::config::DAMAGERS;
-use crate::util::global::get_context;
 use pumpkin::command::dispatcher::CommandError::CommandFailed;
 use pumpkin::entity::EntityBase;
 use pumpkin::{
@@ -23,7 +20,7 @@ use pumpkin::{
         },
     },
     entity::player::Player,
-    run_task_later, run_task_timer,
+    run_task_timer,
     server::Server,
 };
 use pumpkin_data::damage::DamageType;
